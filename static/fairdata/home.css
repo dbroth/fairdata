@@ -1,0 +1,65 @@
+body {
+    background-color: #F3F3F3;
+}
+
+#content {
+    padding: 20px 200px;
+}
+
+.jumbotron {
+    background-color: #F3F3F3;
+}
+
+
+#background-content {
+    display: none;
+}
+
+h1, h2 {
+    font-family: 'Sintony', sans-serif;
+    font-weight: 700;
+    color: #003C83;
+    text-align: center;
+}
+
+h1 {
+    font-size: 4em;
+}
+
+h2 {
+    font-size: 2.7em;
+}
+
+a {
+    color: #00b0ff;
+}
+
+p {
+    font-family: 'Sintony', sans-serif;
+    font-weight: 400;
+    text-indent: 50px;
+}
+
+p.noindent {
+    text-indent: 0;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.center {
+    text-align: center;
+}
+
+.smallspacing {
+    margin-bottom: 8px; /* Ensures that the last <p> still has 10px margin before the next element */
+}
+
+.smallspacing p {
+    margin: 0px 0px 2px;
+}
