@@ -2,24 +2,28 @@ body {
     background-color: #F3F3F3;
 }
 
-#content {
-    padding: 20px 200px;
-}
-
 .jumbotron {
     background-color: #F3F3F3;
+    text-align: center;
 }
 
+.content {
+    padding: 0px 0px;
+}
 
-#background-content {
-    display: none;
+.smallspacing {
+    padding: 0px 100px;
+}
+
+.submit {
+    padding: 0px 600px;
 }
 
 h1, h2 {
     font-family: 'Sintony', sans-serif;
     font-weight: 700;
+    padding: 10px 100px;
     color: #003C83;
-    text-align: center;
 }
 
 h1 {
@@ -37,11 +41,8 @@ a {
 p {
     font-family: 'Sintony', sans-serif;
     font-weight: 400;
-    text-indent: 50px;
-}
-
-p.noindent {
-    text-indent: 0;
+    padding: 0px 100px;
+    text-align: inline;
 }
 
 .bold {
@@ -54,12 +55,4 @@ p.noindent {
 
 .center {
     text-align: center;
-}
-
-.smallspacing {
-    margin-bottom: 8px; /* Ensures that the last <p> still has 10px margin before the next element */
-}
-
-.smallspacing p {
-    margin: 0px 0px 2px;
 }

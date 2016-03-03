@@ -3,46 +3,42 @@
 <script src="{% static "fairdata/jquery.cookie.js" %}"></script>
 <script src="{% static "fairdata/home.js" %}"></script>
 <script src="{% static "fairdata/bootstrap.min.js" %}"></script>
+<script src="{% static "fairdata/d3.min.js" %}"></script>
+<script src="{% static "fairdata/d3.js" %}"></script>
 <link rel="stylesheet" href="{% static "fairdata/bootstrap.min.css" %}" type="text/css" />
 <link rel="stylesheet" href="{% static "fairdata/home.css" %}" type="text/css" />
 <link href='https://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:700' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,400italic' rel='stylesheet' type='text/css'>
 
-<title>Is your data discriminatory?</title>
+<title>could your data discriminate?</title>
 
 <div id="content">
     <div class="jumbotron">
       <h1>Computational Fairness</h1>
     </div>
 
-    <h2>Background</h2>
-
-    <p id="bgtoggle" class="bold center noindent">Click here to toggle background information</p>
+    <h2>Introduction</h2>
 
     <div id="background-content">
-        <p>NEW TEXT HERE.</p>
+        <p>Disparate impact is a form of discrimination referring to practices in employment, housing, or similar institutions that prefer or reject people based on protected attributes such as race, gender, age, relion, etc. It is not necessarily conscious or malicious and can often be unintended. This tool was created to assist people in identifying disparate impact. For more information, see <a href="http://arxiv.org/abs/1412.3756">Certifying and Removing Disparate Impact</a>.</p>
     </div>
 
     <h2>Your Data</h2>
     
-    <p>Save your data as a .csv (Comma Separated Values) file. The first row of information should contain the names of data columns. After the first row, there should neither be any blank entries, nor entries after the last column. Please see <a href="/media/RicciData.csv">this file</a> for an example of the formatting our tool expects. The tool requires columns marked as Unprotected to contain only data that can be ordered and averaged; at this time, this means only numerical data.</p>
+    <p>Save your data as a .csv (Comma Separated Values) file. The first row of information should contain the names of data columns. After the first row, there should neither be any blank entries, nor entries after the last column. Please see <a href="/media/ExampleFile.csv">this file</a> for an example of the formatting our tool expects. The tool requires columns marked as Unprotected to contain only data that can be ordered and averaged; at this time, this means only numerical data.</p>
 
     <p>Once you upload the file, mark the columns in the form according to the following definitions.<p>
 
     <div class="smallspacing">
-        <p class="noindent"><span class="bold">Identifier</span> columns contain information that should be irrelevant to a classifier. These columns will be ignored.</p>
-        <p class="noindent italic">Examples: applicant IDs, phone numbers.</p>
-        <p class="noindent"><span class="bold">Protected</span> columns contain information that should not be used in a classifier.</p>
-        <p class="noindent italic">Examples: race, gender, religion.</p>
-        <p class="noindent"><span class="bold">Unprotected</span> columns contain information that should be used in a classifier.</p>
-        <p class="noindent italic">Examples: interview scores, years of experience.</p>
-        <p class="noindent"><span class="bold">Class</span> columns contain the outcomes assigned to applicants. There must be exactly one Class column per data set.</p>
-        <p class="noindent italic">Examples: yes/no, good/bad.</p>
-        <p class="noindent"><span class="bold">Stratify</span> columns contain values of groups which should be treated equally by a classifier. There must be at least one Stratified column per data set.</p>
+        <p><span class="bold">Identifier</span> columns contain information that should be irrelevant to a classifier. These columns will be ignored.</p>
+        <p class="italic">Examples: applicant IDs, phone numbers.</p>
+        <p><span class="bold">Protected</span> columns contain information that should not be used in a classifier.</p>
+        <p class="italic">Examples: race, gender, religion.</p>
+        <p><span class="bold">Unprotected</span> columns contain information that should be used in a classifier.</p>
+        <p class="italic">Examples: interview scores, years of experience.</p>
+        <p><span class="bold">Class</span> columns contain the outcomes assigned to applicants. There must be exactly one Class column per data set.</p>
+        <p class="italic">Examples: yes/no, good/bad.</p>
+        <p><span class="bold">Stratify</span> columns contain values of groups which should be treated equally by a classifier. There must be at least one Stratified column per data set.</p>
     </div>
-
-    <p>Finally, enter an email and press Calculate! Your email will only be used to send a URL to the repaired results. <span class="italic">Your email will not be stored.</span></p>
 
     <div style="padding: 20" align="center">
         <form class="form-inline" role="form" enctype="multipart/form-data">

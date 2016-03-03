@@ -27,31 +27,28 @@ home.upload_file = function() {
             home.cols = result["cols"];
             
             $("#col-typing").empty();
-            $("#col-typing").html($("<table>").addClass("table table-striped table-condensed")
-                .css({"width":"0","white-space":"nowrap"}));
-            $.each(home.cols, function(index, col_name){
-                var new_row = $("<tr>");
-                // Name of column
-                new_row.append($("<td>").text(col_name).css({"padding":"5px 15px","border":"1px solid #DDD"}));
-                // dropdown for the type of column (Protected, Identifier, etc)
-                new_row.append($("<td>").css({"width":"0","white-space":"nowrap","padding":"5px 15px","border":"1px solid #DDD"})
-                    .append(home.generate_radio_buttons(index)));
-                // Stratify?
-                var stratify_checkbox = $("<label class='checkbox-inline'>").append($("<input>")
-                    .attr({type:'checkbox',name:'stratify',class:'stratify-checkbox'})).append("Stratify");
-                new_row.append($("<td>").css({"padding":"5px 15px","border":"1px solid #DDD"})
-                    .append(stratify_checkbox));
-                    
-                $("#col-typing table").append(new_row);
-            });
-            
-            var start_calc_button = $("<form class='form-inline' role='form'>");
-            start_calc_button.append($("<div class='form-group'>").append($("<input>")
-                .attr({type:'email',id:'email',class:'form-control',placeholder:'Enter email'})
-                .css({"width":"300", "margin-right":"30"})));
-            start_calc_button.append($("<div class='form-group'>").append($("<input>")
-                .attr({type:'button',class:'form-control',value:'Calculate',onclick:'home.start_calc()'})));
-            $("#col-typing").append(start_calc_button);
+
+	    //DEREK'S FORM STUFF
+	    $("#col-typing").css({"font-family":"Sintony, sans-serif", "font-size":"1.3em", "font-weight":"400", "text-align":"inline"});
+	    $("#col-typing").append("<br>Which column is your outcome column (<i>i.e. yes/no</i>)?<br>");
+	    $("#col-typing").append(home.new_dropdown(false));
+	    $("#col-typing").append("Which columns are identifiers (<i>i.e. irrelevant to the classifier</i>)?<br>");
+	    $("#col-typing").append(home.new_dropdown(true));
+	    $("#col-typing").append("Which columns contain information that could be used to discriminate?<br>");
+	    $("#col-typing").append(home.new_dropdown(true));
+	    
+	    button_div = document.createElement("div");
+	    button_div.setAttribute("class","submit");
+
+	    button = document.createElement("input");
+            button.setAttribute("type","button");
+	    button.setAttribute("class","form-control");
+	    button.setAttribute("value","Submit");
+	    button.setAttribute("onClick","home.start_calc()");
+
+	    button_div.appendChild(button);
+	    $("#col-typing").append(button_div);
+
             $("#col-typing").fadeIn();     
         },
         error: function(jqXHR, textStatus, errorThrown) {
@@ -61,42 +58,25 @@ home.upload_file = function() {
     });
 }
 
-home.generate_radio_buttons = function(number) {
+home.new_dropdown = function(mult) {
     dropdown_form = document.createElement("form");
     select = document.createElement("select");
+    select.setAttribute("class","dropdown");
 
-    //Identification option
-    id = document.createElement("OPTION");
-    idText = document.createTextNode("Identification");
-    id.appendChild(idText);
-    id.setAttribute("value","I");
-    select.appendChild(id);
+    if(mult) {
+	select.setAttribute("multiple","multiple");
+    }
 
-    //Protected option
-    protect = document.createElement("OPTION");
-    protectText = document.createTextNode("Protected");
-    protect.appendChild(protectText);
-    protect.setAttribute("value","X");
-    select.appendChild(protect);
-
-    //Unprotected option
-    unprotected = document.createElement("OPTION");
-    unprotectedText = document.createTextNode("Unprotected");
-    unprotected.appendChild(unprotectedText);
-    unprotected.setAttribute("value","Y");
-    unprotected.setAttribute("checked","checked");
-    select.appendChild(unprotected);
-
-    //Class option
-    classOption = document.createElement("OPTION");
-    classOptionText = document.createTextNode("Class");
-    classOption.appendChild(classOptionText);
-    classOption.setAttribute("value","C");
-    select.appendChild(classOption);
-
-    dropdown_form.appendChild(select);
+    $.each(home.cols, function(index, col_name) {
+	new_option = document.createElement("OPTION");
+	text = document.createTextNode(col_name);
+	new_option.appendChild(text);
+	new_option.setAttribute("value", col_name);
+	select.appendChild(new_option);
+    });		
     
-    return dropdown_form
+    dropdown_form.appendChild(select);
+    return dropdown_form;
 }
 
 home.start_calc = function() {
