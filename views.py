@@ -14,3 +14,8 @@ def index(request):
     t = loader.get_template("fairdata/index.html")
     c = RequestContext(request,{})
     return HttpResponse(t.render(c))
+
+def graph(request):
+    t = loader.get_template("fairdata/graph.html")
+    c = RequestContext(request,{})
+    return HttpResponse(t.render(c))
