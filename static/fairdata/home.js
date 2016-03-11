@@ -126,7 +126,7 @@ home.col_class = function() {
 
 
 //  CSV NOT WORKING
-    d3.csv("test_files/sampledata.csv", type, function(data) {
+    d3.csv("/static/fairdata/sampledata.csv", type, function(data) {
 	graph.call(xAxis);
 	
 	// makes lines on graph look normal instead of super thick
