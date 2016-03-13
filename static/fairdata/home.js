@@ -125,8 +125,6 @@ home.col_class = function() {
 	  .scale(y)
 	  .orient("left").tickSize(0);
 
-	y.domain(['Total']);
-	
 	graph.attr("height", barHeight * data.length);
 	
 	var bar = graph.selectAll("g")
@@ -159,10 +157,10 @@ home.col_class = function() {
     });
 
     d3.select("#scores-by-category").text("Scores by Category");
-/*
+
     barHeight = 40;
     
-    graph = d3.select("#category-graph").append("svg")
+    var graph2 = d3.select("#category-graph").append("svg")
 	.attr("width", width + margin.left + margin.right)
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")
@@ -170,6 +168,8 @@ home.col_class = function() {
 
     d3.csv("/static/fairdata/sampledata.csv", function(data) {
 	d3.select("#scores-by-categery").text("Scores by Category");
+	
+	console.log(JSON.stringify(data.shift()));
 
 	var y = d3.scale.ordinal()
 	  .rangeRoundBands([0, barHeight * data.length], .1);
@@ -180,35 +180,34 @@ home.col_class = function() {
 
 	y.domain(home.cols);
 
-	graph.attr("height", barHeight*data.length);
+	graph2.attr("height", barHeight*data.length);
 
-	var bar = graph.selectAll("g")
+	var bar = graph2.selectAll("g")
 	  .data(data)
 	  .enter().append("g")
 	  .attr("transform",function(d,i) { return "translate(0," + i*barHeight+ ")" });	
 
 	bar.append("rect")
 	  .attr("fill","blue")
-	  .attr("width",function(d) { return x(d.value); })
+	  .attr("width",function(d) { return x(d.Ratio); })
 	  .attr("height", barHeight - 1);
 
 	bar.append("text")
-	  .attr("x", function(d) { return x(d.value) - 3; })
+	  .attr("x", function(d) { return x(d.Ratio) - 3; })
 	  .attr("y", barHeight/2)
 	  .attr("dy",".35em")
-	  .text(function(d) { return (d.value*100)+"%"});
+	  .text(function(d) { return (d.Ratio*100)+"%"});
 
-	graph.append("g")
+	graph2.append("g")
 	  .attr("class","x-axis")
 	  .attr("transform","translate(0," + barHeight * data.length + ")")
 	  .call(xAxis);
 
-	graph.append("g")
+	graph2.append("g")
 	  .attr("class","y-axis")
 	  .style("text-anchor","end")
 	  .call(yAxis);
     });
-*/
 }
 
 function type(d) {
