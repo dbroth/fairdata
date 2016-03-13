@@ -95,59 +95,37 @@ home.col_class = function() {
 	protect.push($(this).val());
     });
 
-    // GRAPH STUFF
-    var margin = {top: 20, right: 20, bottom: 30, left: 20},
+    // TOTAL GRAPH 
+    var margin = {top: 20, right: 40, bottom: 30, left: 40},
 	width = 960 - margin.left - margin.right,
-	height = 350 - margin.top - margin.bottom;
-    var barHeight = 40;
+	height = 200 - margin.top - margin.bottom;
+    var barHeight = 10;
 
     var x = d3.scale.linear()
 	.range([0, width]);
 
     var xAxis = d3.svg.axis()
 	.scale(x)
-	.orient("bottom").ticks(4);
+	.orient("bottom").ticks(4).tickSize(0);
 
-    var graph = d3.select("#graph").append("svg")
+    var graph = d3.select("#total-graph").append("svg")
 	.attr("width", width + margin.left + margin.right)
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-/*
-	  .call(xAxis);
 
-    graph.selectAll("line")
-	.attr("stroke","black")	
-	.attr("fill","none");
-
-    graph.selectAll("path")
-	.attr("fill","none")
-	.attr("shape-rendering","crispEdges")
-	.attr("stroke","black");
-*/
-
-//  CSV NOT WORKING
     d3.csv("/static/fairdata/sampledata.csv", function(data) {
 
-	graph.call(xAxis);
-	
-	// makes lines on graph look normal instead of super thick
-	graph.selectAll("line")
-	    .attr("stroke","black")
-	    .attr("fill","none");
-	graph.selectAll("path")
-	    .attr("fill","none")
-	    .attr("stroke","black")
-	    .attr("shape-rendering","crispEdges");
+	d3.select("#overall-fairness").text("Overall Fairness");
+	d3.select("#percentage").text("Your data is " + JSON.stringify(data[0]["Ratio"]*100) + "% fair.");
 
-/*
 	var y = d3.scale.ordinal()
 	  .rangeRoundBands([0, barHeight * data.length], .1);
 	var yAxis = d3.svg.axis()
 	  .scale(y)
-	  .orient("left");
+	  .orient("left").tickSize(0);
 
-	y.domain(home.cols);
+	y.domain(['Total']);
 	
 	graph.attr("height", barHeight * data.length);
 	
@@ -157,86 +135,86 @@ home.col_class = function() {
 	  .attr("transform", function(d,i) { return "translate(0," + i * barHeight + ")"; });
 
         bar.append("rect")
-	  .attr("width", function(d) { return x(d.value); })
-          .attr("height", barHeight - 1);
+	  .attr("fill","red")
+	  .attr("width", x(data[0]["Ratio"]))
+          .attr("height", barHeight);
 
-	bar.append("text")
-	  .attr("x", function(d) { return x(d.value) - 3; })
-          .attr("y", barHeight / 2)
-          .attr("dy", ".35em")
-          .text(function(d) { return (d.value*100)+"%"; });
-
-	alert("BEFORE AXIS");
 	graph.append("g")
 	  .attr("class","x-axis")
 	  .attr("transform","translate(0," + barHeight * data.length + ")")
 	  .call(xAxis);
-	  //.append("g")
-	  //.attr("class","y-axis")
-	  //.style("text-anchor","end")
-	  //.call(yAxis);
-	alert("AFTER AXIS CALL");
-*/
+
+	graph.append("g")
+	  .attr("class","y-axis")
+	  .style("text-anchor","end")
+	  .call(yAxis);
+
+	graph.selectAll("line")
+            .attr("stroke","black")
+            .attr("fill","none");
+        graph.selectAll("path")
+            .attr("fill","none")
+            .attr("stroke","black")
+            .attr("shape-rendering","crispEdges");	
     });
+
+    d3.select("#scores-by-category").text("Scores by Category");
+/*
+    barHeight = 40;
+    
+    graph = d3.select("#category-graph").append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	  .attr("transform","translate("+margin.left +"," + margin.top + ")");
+
+    d3.csv("/static/fairdata/sampledata.csv", function(data) {
+	d3.select("#scores-by-categery").text("Scores by Category");
+
+	var y = d3.scale.ordinal()
+	  .rangeRoundBands([0, barHeight * data.length], .1);
+
+	var yAxis = d3.svg.axis()
+	  .scale(y)
+	  .orient("left").tickSize(0);
+
+	y.domain(home.cols);
+
+	graph.attr("height", barHeight*data.length);
+
+	var bar = graph.selectAll("g")
+	  .data(data)
+	  .enter().append("g")
+	  .attr("transform",function(d,i) { return "translate(0," + i*barHeight+ ")" });	
+
+	bar.append("rect")
+	  .attr("fill","blue")
+	  .attr("width",function(d) { return x(d.value); })
+	  .attr("height", barHeight - 1);
+
+	bar.append("text")
+	  .attr("x", function(d) { return x(d.value) - 3; })
+	  .attr("y", barHeight/2)
+	  .attr("dy",".35em")
+	  .text(function(d) { return (d.value*100)+"%"});
+
+	graph.append("g")
+	  .attr("class","x-axis")
+	  .attr("transform","translate(0," + barHeight * data.length + ")")
+	  .call(xAxis);
+
+	graph.append("g")
+	  .attr("class","y-axis")
+	  .style("text-anchor","end")
+	  .call(yAxis);
+    });
+*/
 }
 
 function type(d) {
     d.value = +d.value;
     return d;
 }
-
-/*
-home.start_calc = function() {
-    var col_types = [];
-    $("#col-typing tr form :checked").each(function(index) {
-        col_types.push($(this).val());
-    });
-   // For each column which has the stratify checkbox checked, append its name to this list.
-    var stratify_cols = []
-    var exit = false;
-    $("#col-typing tr").each(function(index) {
-        if ($(this).find(".stratify-checkbox").is(':checked')) {
-            if ($(this).find("form :checked").val() != "I") {
-                stratify_cols.push($(this).find("td:first").text());
-            } else {
-                exit = true; // Can't exit home.start_calc via return at this point, so store it in a var
-            }
-        }
-    });
-    if (exit) {
-        alert("Please don't stratify an identification column.");
-        return;
-    }
-    if (!home.sanity_check(col_types, stratify_cols)) {
-        return;
-    }
-    
-    
-    $.ajax({
-        type: "GET",
-        url: "/start_calc/",
-        data: JSON.stringify([home.file_id, home.cols, col_types, stratify_cols, $("#email").val(), parseFloat(1.0)]),
-	contentType: "application/json",
-        dataType: "json",
-        success: function(data) {
-            if (!data["valid"]) {
-                alert(data["reason"]);
-                return;
-            }
-            console.log(data);
-            $("#download").empty().append($("<a>").attr({href: data["url"]}).text("Download"));
-            if (!data["email_success"]) {
-                $("#download").append($("<br>")).append($("<p class='noindent'>").text("Email failed to send."));
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            alert("Failed to calculate.");
-            console.log(textStatus);
-            console.log(errorThrown);
-        }
-    });
-}
-*/
 
 home.sanity_check = function(col_types, stratify_cols) {
     if (stratify_cols.length < 1) {
