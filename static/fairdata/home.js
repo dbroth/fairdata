@@ -113,7 +113,8 @@ home.col_class = function() {
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-//	  .call(xAxis);
+/*
+	  .call(xAxis);
 
     graph.selectAll("line")
 	.attr("stroke","black")	
@@ -123,10 +124,11 @@ home.col_class = function() {
 	.attr("fill","none")
 	.attr("shape-rendering","crispEdges")
 	.attr("stroke","black");
-
+*/
 
 //  CSV NOT WORKING
-    d3.csv("test_files/sampledata.csv", type, function(data) {
+    d3.csv("/static/fairdata/sampledata.csv", function(data) {
+
 	graph.call(xAxis);
 	
 	// makes lines on graph look normal instead of super thick
@@ -137,8 +139,6 @@ home.col_class = function() {
 	    .attr("fill","none")
 	    .attr("stroke","black")
 	    .attr("shape-rendering","crispEdges");
-
-	alert("DATA: " + data);
 
 /*
 	var y = d3.scale.ordinal()
