@@ -25,7 +25,6 @@ home.upload_file = function() {
             result = data["result"];
             home.file_id = result["id"];
             home.cols = result["cols"];
-	   // data = [0.65,0.86,0.84,1.0,0.92,0.88,0.86,0.84];
             
             $("#col-typing").empty();
 
@@ -96,9 +95,9 @@ home.col_class = function() {
     });
 
     // TOTAL GRAPH 
-    var margin = {top: 20, right: 40, bottom: 30, left: 40},
-	width = 960 - margin.left - margin.right,
-	height = 200 - margin.top - margin.bottom;
+    var margin = {top: 20, right: 40, bottom: 60, left: 70},
+	width = 1100 - margin.left - margin.right,
+	height = 100 - margin.top - margin.bottom;
     var barHeight = 10;
 
     var x = d3.scale.linear()
@@ -125,12 +124,12 @@ home.col_class = function() {
 	  .scale(y)
 	  .orient("left").tickSize(0);
 
-	graph.attr("height", barHeight * data.length);
+	//graph.attr("height", barHeight * data.length);
 	
 	var bar = graph.selectAll("g")
 	  .data(data)
 	  .enter().append("g")
-	  .attr("transform", function(d,i) { return "translate(0," + i * barHeight + ")"; });
+	  .attr("transform", "translate(0," + barHeight - 30 + ")");
 
         bar.append("rect")
 	  .attr("fill","red")
@@ -139,13 +138,13 @@ home.col_class = function() {
 
 	graph.append("g")
 	  .attr("class","x-axis")
-	  .attr("transform","translate(0," + barHeight * data.length + ")")
+	  .attr("transform", "translate(0," + barHeight + ")")
 	  .call(xAxis);
 
 	graph.append("g")
 	  .attr("class","y-axis")
-	  .style("text-anchor","end")
-	  .call(yAxis);
+	  .style("text-anchor","end");
+	//  .call(yAxis);
 
 	graph.selectAll("line")
             .attr("stroke","black")
@@ -154,10 +153,15 @@ home.col_class = function() {
             .attr("fill","none")
             .attr("stroke","black")
             .attr("shape-rendering","crispEdges");	
+	
     });
 
+    // CATEGORY GRAPH
     d3.select("#scores-by-category").text("Scores by Category");
 
+    margin.left = 70;
+    width = 1100 - margin.left - margin.right,
+    height = 360 - margin.top - margin.bottom;
     barHeight = 40;
     
     var graph2 = d3.select("#category-graph").append("svg")
@@ -169,8 +173,6 @@ home.col_class = function() {
     d3.csv("/static/fairdata/sampledata.csv", function(data) {
 	d3.select("#scores-by-categery").text("Scores by Category");
 	
-	console.log(JSON.stringify(data.shift()));
-
 	var y = d3.scale.ordinal()
 	  .rangeRoundBands([0, barHeight * data.length], .1);
 
@@ -193,7 +195,7 @@ home.col_class = function() {
 	  .attr("height", barHeight - 1);
 
 	bar.append("text")
-	  .attr("x", function(d) { return x(d.Ratio) - 3; })
+	  .attr("x", function(d) { return x(d.Ratio); })
 	  .attr("y", barHeight/2)
 	  .attr("dy",".35em")
 	  .text(function(d) { return (d.Ratio*100)+"%"});
@@ -207,6 +209,14 @@ home.col_class = function() {
 	  .attr("class","y-axis")
 	  .style("text-anchor","end")
 	  .call(yAxis);
+
+	graph2.selectAll("line")
+            .attr("stroke","black")
+            .attr("fill","none");
+        graph2.selectAll("path")
+            .attr("fill","none")
+            .attr("stroke","black")
+            .attr("shape-rendering","crispEdges");
     });
 }
 
