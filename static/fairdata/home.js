@@ -172,6 +172,7 @@ home.col_class = function() {
 
     d3.csv("/static/fairdata/sampledata.csv", function(data) {
 	d3.select("#scores-by-categery").text("Scores by Category");
+	data.shift();
 	
 	var y = d3.scale.ordinal()
 	  .rangeRoundBands([0, barHeight * data.length], .1);
@@ -181,6 +182,7 @@ home.col_class = function() {
 	  .orient("left").tickSize(0);
 
 	y.domain(home.cols);
+	//y.domain(['Total Population','Median Income','Associates Degree','Bachelors', 'Family Estimate','Population','Income']);
 
 	graph2.attr("height", barHeight*data.length);
 
