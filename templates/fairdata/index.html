@@ -5,6 +5,7 @@
 <script src="{% static "fairdata/bootstrap.min.js" %}"></script>
 <script src="{% static "fairdata/d3.min.js" %}"></script>
 <script src="{% static "fairdata/d3.js" %}"></script>
+<!-- <script src="{% static "fairdata/colorbrewer.js" %}"></script> -->
 <link rel="stylesheet" href="{% static "fairdata/bootstrap.min.css" %}" type="text/css" />
 <link rel="stylesheet" href="{% static "fairdata/home.css" %}" type="text/css" />
 <link href='https://fonts.googleapis.com/css?family=Sintony:400,700' rel='stylesheet' type='text/css'>
@@ -13,31 +14,13 @@
 
 <div id="content">
     <div class="jumbotron">
-      <h1>Computational Fairness</h1>
+      <h1>Could your data discriminate?</h1>
     </div>
-
-    <h2>Introduction</h2>
 
     <div id="background-content">
-        <p>Disparate impact is a form of discrimination referring to practices in employment, housing, or similar institutions that prefer or reject people based on protected attributes such as race, gender, age, relion, etc. It is not necessarily conscious or malicious and can often be unintended. This tool was created to assist people in identifying disparate impact. For more information, see <a href="http://arxiv.org/abs/1412.3756">Certifying and Removing Disparate Impact</a>.</p>
-    </div>
-
-    <h2>Your Data</h2>
-    
-    <p>Save your data as a .csv (Comma Separated Values) file. The first row of information should contain the names of data columns. After the first row, there should neither be any blank entries, nor entries after the last column. Please see <a href="/media/ExampleFile.csv">this file</a> for an example of the formatting our tool expects. The tool requires columns marked as Unprotected to contain only data that can be ordered and averaged; at this time, this means only numerical data.</p>
-
-    <p>Once you upload the file, mark the columns in the form according to the following definitions.<p>
-
-    <div class="smallspacing">
-        <p><span class="bold">Identifier</span> columns contain information that should be irrelevant to a classifier. These columns will be ignored.</p>
-        <p class="italic">Examples: applicant IDs, phone numbers.</p>
-        <p><span class="bold">Protected</span> columns contain information that should not be used in a classifier.</p>
-        <p class="italic">Examples: race, gender, religion.</p>
-        <p><span class="bold">Unprotected</span> columns contain information that should be used in a classifier.</p>
-        <p class="italic">Examples: interview scores, years of experience.</p>
-        <p><span class="bold">Class</span> columns contain the outcomes assigned to applicants. There must be exactly one Class column per data set.</p>
-        <p class="italic">Examples: yes/no, good/bad.</p>
-        <p><span class="bold">Stratify</span> columns contain values of groups which should be treated equally by a classifier. There must be at least one Stratified column per data set.</p>
+	<p>Even as explicit discrimination decreases, implicit discrimination remains widespread. It exists in the form of laws or policies that are seemingly color- or gender-blind, but in practice discriminate—often unintentionally—against women or minorities. The emergence of data-driven decision making, predictive analytics, and machine-learning algorithms have automated these discriminatory decision making patterns, thereby introducing new concerns regarding data’s potential discriminatory effects.</p><br>
+	<p>To determine if your data could be used to make discriminatory decisions, upload it here!  Save your data as a .csv (Comma Separated Values) file. The first row of information should contain the names of data columns. After the first row, there should neither be any blank entries, nor entries after the last column. Please see <a href="/media/ExampleFile.csv">this file</a> for an example of the formatting our tool expects.</p><br>
+	<p>After you upload your data, we'll ask you a few questions about your data so that we can tell you how fair decisions resulting from it will be.</p>
     </div>
 
     <div style="padding: 20" align="center">

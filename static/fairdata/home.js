@@ -7,6 +7,8 @@ home.upload_file = function() {
     
     var csrftoken = $.cookie('csrftoken');
 
+	console.log(csrftoken);
+
     $.ajax({
         type: "POST",
         url: "/accept_file/",
@@ -21,7 +23,6 @@ home.upload_file = function() {
                 alert(data["reason"]);
                 return;
             }
- 	          console.log(data);
             result = data["result"];
             home.file_id = result["id"];
             home.cols = result["cols"];
@@ -107,6 +108,22 @@ home.col_class = function() {
 	.scale(x)
 	.orient("bottom").ticks(4).tickSize(0);
 
+    var colorbrewer = [
+	["#fc8d59","#ffffbf","#91cf60"],
+	["#d7191c","#fdae61","#a6d96a","#1a9641"],
+	["#d7191c","#fdae61","#ffffbf","#a6d96a","#1a9641"],
+	["#d73027","#fc8d59","#fee08b","#d9ef8b","#91cf60","#1a9850"],
+	["#d73027","#fc8d59","#fee08b","#ffffbf","#d9ef8b","#91cf60","#1a9850"],
+	["#d73027","#f46d43","#fdae61","#fee08b","#d9ef8b","#a6d96a","#66bd63","#1a9850"],
+	["#d73027","#f46d43","#fdae61","#fee08b","#ffffbf","#d9ef8b","#a6d96a","#66bd63","#1a9850"],
+	["#a50026","#d73027","#f46d43","#fdae61","#fee08b","#d9ef8b","#a6d96a","#66bd63","#1a9850","#006837"],
+	["#a50026","#d73027","#f46d43","#fdae61","#fee08b","#ffffbf","#d9ef8b","#a6d96a","#66bd63","#1a9850","#006837"]
+    ]
+
+    var color = d3.scale.linear()
+	.domain([0.7,0.9,1])
+	.range(colorbrewer[4]);
+
     var graph = d3.select("#total-graph").append("svg")
 	.attr("width", width + margin.left + margin.right)
 	.attr("height", height + margin.top + margin.bottom)
@@ -124,15 +141,13 @@ home.col_class = function() {
 	  .scale(y)
 	  .orient("left").tickSize(0);
 
-	//graph.attr("height", barHeight * data.length);
-	
 	var bar = graph.selectAll("g")
 	  .data(data)
 	  .enter().append("g")
 	  .attr("transform", "translate(0," + barHeight - 30 + ")");
 
         bar.append("rect")
-	  .attr("fill","red")
+	  .attr("fill", function(d) { return color(d.Ratio); })
 	  .attr("width", x(data[0]["Ratio"]))
           .attr("height", barHeight);
 
@@ -192,7 +207,7 @@ home.col_class = function() {
 	  .attr("transform",function(d,i) { return "translate(0," + i*barHeight+ ")" });	
 
 	bar.append("rect")
-	  .attr("fill","blue")
+	  .attr("fill", function(d) { return color(d.Ratio); })
 	  .attr("width",function(d) { return x(d.Ratio); })
 	  .attr("height", barHeight - 1);
 
