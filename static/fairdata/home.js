@@ -26,13 +26,17 @@ home.upload_file = function() {
             result = data["result"];
             home.file_id = result["id"];
             home.cols = result["cols"];
-            
+
             $("#col-typing").empty();
 
 	    //DEREK'S FORM STUFF
 	    $("#col-typing").css({"font-family":"Sintony, sans-serif", "font-size":"1.3em", "font-weight":"400", "text-align":"inline"});
 	    $("#col-typing").append("<br>Which column is your outcome column (<i>i.e. yes/no</i>)?<br>");
 	    $("#col-typing").append(home.new_dropdown(false, "outcome"));
+
+	    $("#col-typing").append("What is the outcome value you are looking for (<i>i.e. true</i>)?<br>");
+	    $("#col-typing").append("<input type=\"text\" id=\"positive\"><br><br>");
+
 	    $("#col-typing").append("Which columns are identifiers (<i>i.e. irrelevant to the classifier</i>)?<br>");
 	    $("#col-typing").append(home.new_dropdown(true, "ids"));
 	    $("#col-typing").append("Which columns contain information that could be used to discriminate?<br>");
@@ -94,6 +98,7 @@ home.color = function(i) {
 }
 
 home.col_class = function() {
+    console.log(home.file_id);
     var outcome = $("#outcome :selected").val();
 
     var ids = [];
@@ -105,6 +110,14 @@ home.col_class = function() {
     $("#protected :selected").each(function(index) {
 	protect.push($(this).val());
     });
+
+    // positive value (ex: true, 1, hired) as string
+    var positive = $("#positive").val();
+
+    var csv_path = "/../media/user_uploads/" + home.file_id + ".csv";
+
+    // path to uploaded csv, list of protected cols 
+    run(csv_path, protect, ids);
 
     // TOTAL GRAPH 
     var margin = {top: 20, right: 40, bottom: 60, left: 70},
@@ -192,7 +205,6 @@ home.col_class = function() {
 	  .orient("left").tickSize(0);
 
 	y.domain(home.cols);
-	//y.domain(['Total Population','Median Income','Associates Degree','Bachelors', 'Family Estimate','Population','Income']);
 
 	graph2.attr("height", barHeight*data.length);
 

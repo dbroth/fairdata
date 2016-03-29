@@ -1,7 +1,7 @@
 from django.db import models
 
 def file_destination(instance, filename):
-    return 'user_uploads/' + instance.generated_id + '/Fixed Data.csv'
+    return 'user_uploads/' + instance.generated_id + '.csv'
 
 class Uploaded_File(models.Model):
     generated_id = models.CharField(max_length=25)
