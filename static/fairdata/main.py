@@ -8,6 +8,12 @@ from weka.core.converters import Loader
 from weka.filters import Filter
 from weka.classifiers import Classifier
 import weka.plot.graph as graph
+import sys
+
+def write_file(d, path):
+    with open(path, 'w') as f:
+        f.write(",".join(k for k in d.keys()) + "\n")
+        f.write(",".join(str(v) for v in d.values()) + "\n")
 
 def run_classifier(path, prot, sel, cols, prot_vals, beta):
         
@@ -73,6 +79,7 @@ def run_classifier(path, prot, sel, cols, prot_vals, beta):
     jvm.stop()
 
     return DIs
+    #write_file(DIs, out)
 
 
 def read_file(path, prot, sel):
@@ -114,20 +121,34 @@ def read_file(path, prot, sel):
     beta = float(saimc) / float(imc)
 
     return col_names, beta, protected_vals
+
+
+# args to the script are:
+# 1) path to input csv file
+# 2) name of protected attribute (pulled directly from user input csv file)
+# 3) 'positive' value of the protected attribute we are interested in
+# 4) name of selected attribute (pulled directly from user input csv file)
+# 5) 'positive' value of the selected attribute we are interested in
+# 6) (?)OPTIONAL: path to write output csv file to 
+
+if len(sys.argv) < 6:
+    raise ValueError("Missing arguments")
+
+in_path = sys.argv[1]
+protected = [sys.argv[2], sys.argv[3]]
+selected = [sys.argv[4], sys.argv[5]]
+out_path = "out_files/out.csv"
+
+if len(sys.argv) >=6:
+    out_path = sys.argv[6]
+
+# verify path is good
+if not os.path.isfile(in_path):
+    raise IOError("File not found: " + in_path)
     
+col_names, beta, protected_vals = read_file(in_path, protected, selected)
 
-# csv_path is a path to the csv file that contains our data
-#
-# protected is a list that contains (in order) the name of the protected attribute and the
-# 'positive' value
-# selected is a list that contains (in order) the name of the selected attribute and the
-# 'positive' value
-def run(csv_path, protected, selected):
+#return run_classifier(in_path, protected, selected, col_names, protected_vals, beta)
+DIs = run_classifier(in_path, protected, selected, col_names, protected_vals, beta)
 
-    # verify path is good
-    if not os.path.isfile(csv_path):
-        raise IOError("File not found: " + csv_path)
-    
-    col_names, beta, protected_vals = read_file(csv_path, protected, selected)
-
-    return run_classifier(csv_path, protected, selected, col_names, protected_vals, beta)
+write_file(DIs, out_path)

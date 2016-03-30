@@ -11,6 +11,7 @@ from django.core.servers.basehttp import FileWrapper
 from fairdata.models import Uploaded_File
 import datetime
 import subprocess
+import testscript
 
 def index(request):
     t = loader.get_template("fairdata/index.html")
@@ -18,6 +19,7 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def graph(request):
-    command = "python static/fairdata/testscript.py"
+    command = "python testscript.py"
     subprocess.call(command, shell=True)
+    print command
     return HttpResponse("DID I DO THE THING?")

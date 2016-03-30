@@ -35,12 +35,15 @@ home.upload_file = function() {
 	    $("#col-typing").append(home.new_dropdown(false, "outcome"));
 
 	    $("#col-typing").append("What is the outcome value you are looking for (<i>i.e. true</i>)?<br>");
-	    $("#col-typing").append("<input type=\"text\" id=\"positive\"><br><br>");
+	    $("#col-typing").append("<input type=\"text\" id=\"outcome_positive\"><br><br>");
 
 	    $("#col-typing").append("Which columns are identifiers (<i>i.e. irrelevant to the classifier</i>)?<br>");
 	    $("#col-typing").append(home.new_dropdown(true, "ids"));
 	    $("#col-typing").append("Which columns contain information that could be used to discriminate?<br>");
 	    $("#col-typing").append(home.new_dropdown(true, "protected"));
+
+	    $("#col-typing").append("What aspect of the protected class are you examining (<i>i.e. Hispanic</i>)?<br>");
+	    $("#col-typing").append("<input type=\"text\" id=\"protected_positive\"><br><br>")
 	    
 	    button_div = document.createElement("div");
 	    button_div.setAttribute("class","submit");
@@ -112,20 +115,29 @@ home.col_class = function() {
     });
 
     // positive value (ex: true, 1, hired) as string
-    var positive = $("#positive").val();
+    var outcome_positive = $("#outcome_positive").val();
+    
+    // value being looked at for protected column (ex: asian)
+    var protected_positive = $("#protected_positive").val();
 
-    outcome.push(positive);
-    protect.push(positive);
+   // outcome.push(outcome_positive);
+   // protect.push(protected_positive);
 
-    var csv_path = "/../media/user_uploads/" + home.file_id + ".csv";
+    var input_csv = "/../media/user_uploads/" + home.file_id + ".csv";
+    var out_csv = "/graph_csvs/" + home.file_id + ".csv"; 
 
     // run main.py
     $.ajax({
         type: "GET",
-        url: "graph",
-        success: function(csv_path,protect, outcome) {
-		run(csv_path,protect,outcome);
-		alert("YOU DID THE THING.");
+        url: "/static/fairdata/main.py",
+	data: {in_path: input_csv,
+		protect: protect[0],
+		protect_pos: protected_positive,
+		selected: outcome,
+		select_pos: outcome_positive,
+		out_path: out_csv}, 
+        success: function(data) {
+		console.log(data);
 		return;
 		}
 	});
@@ -149,7 +161,9 @@ home.col_class = function() {
 	.append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    d3.csv("/static/fairdata/sampledata.csv", function(data) {
+    
+
+    d3.csv("/fairdata" + out_csv, function(data) {
 
 	d3.select("#overall-fairness").text("Overall Fairness");
 	d3.select("#percentage").text("Your data is " + JSON.stringify(data[0]["Ratio"]*100) + "% fair.");
