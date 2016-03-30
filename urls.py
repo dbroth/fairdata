@@ -4,5 +4,5 @@ from fairdata import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
-    url(r'^results', views.graph, name='graph'),
+    url(r'^$', views.graph, name='graph'),
 )

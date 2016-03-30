@@ -99,7 +99,7 @@ home.color = function(i) {
 
 home.col_class = function() {
     console.log(home.file_id);
-    var outcome = $("#outcome :selected").val();
+    var outcome = [$("#outcome :selected").val()];
 
     var ids = [];
     $("#ids :selected").each(function(index) {
@@ -114,10 +114,21 @@ home.col_class = function() {
     // positive value (ex: true, 1, hired) as string
     var positive = $("#positive").val();
 
+    outcome.push(positive);
+    protect.push(positive);
+
     var csv_path = "/../media/user_uploads/" + home.file_id + ".csv";
 
-    // path to uploaded csv, list of protected cols 
-    run(csv_path, protect, ids);
+    // run main.py
+    $.ajax({
+        type: "GET",
+        url: "graph",
+        success: function(csv_path,protect, outcome) {
+		run(csv_path,protect,outcome);
+		alert("YOU DID THE THING.");
+		return;
+		}
+	});
 
     // TOTAL GRAPH 
     var margin = {top: 20, right: 40, bottom: 60, left: 70},

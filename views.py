@@ -9,6 +9,8 @@ from django.core.files import File
 from django.core.servers.basehttp import FileWrapper
 
 from fairdata.models import Uploaded_File
+import datetime
+import subprocess
 
 def index(request):
     t = loader.get_template("fairdata/index.html")
@@ -16,6 +18,6 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def graph(request):
-    t = loader.get_template("fairdata/graph.html")
-    c = RequestContext(request,{})
-    return HttpResponse(t.render(c))
+    command = "python static/fairdata/testscript.py"
+    subprocess.call(command, shell=True)
+    return HttpResponse("DID I DO THE THING?")
