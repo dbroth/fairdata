@@ -7,7 +7,7 @@ home.upload_file = function() {
     
     var csrftoken = $.cookie('csrftoken');
 
-	console.log(csrftoken);
+//	console.log(csrftoken);
 
     $.ajax({
         type: "POST",
@@ -40,7 +40,7 @@ home.upload_file = function() {
 	    $("#col-typing").append("Which columns are identifiers (<i>i.e. irrelevant to the classifier</i>)?<br>");
 	    $("#col-typing").append(home.new_dropdown(true, "ids"));
 	    $("#col-typing").append("Which columns contain information that could be used to discriminate?<br>");
-	    $("#col-typing").append(home.new_dropdown(true, "protected"));
+	    $("#col-typing").append(home.new_dropdown(false, "protected"));
 
 	    $("#col-typing").append("What aspect of the protected class are you examining (<i>i.e. Hispanic</i>)?<br>");
 	    $("#col-typing").append("<input type=\"text\" id=\"protected_positive\"><br><br>")
@@ -101,7 +101,6 @@ home.color = function(i) {
 }
 
 home.col_class = function() {
-    console.log(home.file_id);
     var outcome = [$("#outcome :selected").val()];
 
     var ids = [];
@@ -109,10 +108,10 @@ home.col_class = function() {
 	ids.push($(this).val());
     });
 
-    var protect = [];
-    $("#protected :selected").each(function(index) {
-	protect.push($(this).val());
-    });
+    var protect = [$("#protected :selected").val()];
+    //$("#protected :selected").each(function(index) {
+//	protect.push($(this).val());
+ //   });
 
     // positive value (ex: true, 1, hired) as string
     var outcome_positive = $("#outcome_positive").val();
@@ -129,16 +128,15 @@ home.col_class = function() {
     // run main.py
     $.ajax({
         type: "GET",
-        url: "/static/fairdata/main.py",
-	data: {in_path: input_csv,
-		protect: protect[0],
-		protect_pos: protected_positive,
-		selected: outcome,
-		select_pos: outcome_positive,
-		out_path: out_csv}, 
-        success: function(data) {
-		console.log(data);
-		return;
+        url: "/fairdata/run_script/",
+	data: {'in_path': input_csv,
+		'protected': protect,
+		'protected_pos': protected_positive,
+		'selected': outcome,
+		'selected_pos': outcome_positive,
+		'out_path': out_csv}, 
+        success: function(response) {
+		alert(response);
 		}
 	});
 
@@ -163,7 +161,8 @@ home.col_class = function() {
 
     
 
-    d3.csv("/fairdata" + out_csv, function(data) {
+    //d3.csv("/fairdata" + out_csv, function(data) {
+    d3.csv("/static/fairdata/sampledata.csv", function(data) {
 
 	d3.select("#overall-fairness").text("Overall Fairness");
 	d3.select("#percentage").text("Your data is " + JSON.stringify(data[0]["Ratio"]*100) + "% fair.");
