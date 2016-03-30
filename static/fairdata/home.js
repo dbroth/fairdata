@@ -109,9 +109,6 @@ home.col_class = function() {
     });
 
     var protect = [$("#protected :selected").val()];
-    //$("#protected :selected").each(function(index) {
-//	protect.push($(this).val());
- //   });
 
     // positive value (ex: true, 1, hired) as string
     var outcome_positive = $("#outcome_positive").val();
@@ -129,12 +126,12 @@ home.col_class = function() {
     $.ajax({
         type: "GET",
         url: "/fairdata/run_script/",
-	data: {'in_path': input_csv,
-		'protected': protect,
-		'protected_pos': protected_positive,
-		'selected': outcome,
-		'selected_pos': outcome_positive,
-		'out_path': out_csv}, 
+//	data: {'in_path': input_csv,
+//		'protected': protect,
+//		'protected_pos': protected_positive,
+//		'selected': outcome,
+//		'selected_pos': outcome_positive,
+//		'out_path': out_csv}, 
         success: function(response) {
 		alert(response);
 		}

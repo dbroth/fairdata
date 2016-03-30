@@ -18,6 +18,7 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def run_script(request):
+    print request.GET.get('in_path','')
     command = "python main.py"
     subprocess.call(command, shell=True)
     return HttpResponse("DID I DO THE THING?")
