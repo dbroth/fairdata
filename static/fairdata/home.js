@@ -101,14 +101,14 @@ home.color = function(i) {
 }
 
 home.col_class = function() {
-    var outcome = [$("#outcome :selected").val()];
+    var outcome = $("#outcome :selected").val();
 
     var ids = [];
     $("#ids :selected").each(function(index) {
 	ids.push($(this).val());
     });
 
-    var protect = [$("#protected :selected").val()];
+    var protect = $("#protected :selected").val();
 
     // positive value (ex: true, 1, hired) as string
     var outcome_positive = $("#outcome_positive").val();
@@ -122,18 +122,23 @@ home.col_class = function() {
     var input_csv = "/../media/user_uploads/" + home.file_id + ".csv";
     var out_csv = "/graph_csvs/" + home.file_id + ".csv"; 
 
-    // run main.py
+    // runs main.py
+    // FRANCIS
     $.ajax({
         type: "GET",
         url: "/fairdata/run_script/",
-//	data: {'in_path': input_csv,
-//		'protected': protect,
-//		'protected_pos': protected_positive,
-//		'selected': outcome,
-//		'selected_pos': outcome_positive,
-//		'out_path': out_csv}, 
+	data: {in_path: input_csv,
+		protect: protect,
+		protected_pos: protected_positive,
+		selected: outcome,
+		selected_pos: outcome_positive,
+		out_path: out_csv}, 
         success: function(response) {
 		alert(response);
+		},
+	error: function(req, textStatus, errorThrown) {
+		alert('FAIL: ' + textStatus + ' ' + errorThrown)
+		alert(req)
 		}
 	});
 

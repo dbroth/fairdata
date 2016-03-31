@@ -18,7 +18,12 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def run_script(request):
-    print request.GET.get('in_path','')
-    command = "python main.py"
+    in_path = str(request.GET.get('in_path')) + ' '
+    protected = str(request.GET.get('protect')) + ' '
+    pro_pos = str(request.GET.get('protected_pos', '')) + ' ' 
+    selected = str(request.GET.get('selected', '')) + ' '
+    sel_pos = str(request.GET.get('selected_pos', '1')) + ' ' 
+    out_path = str(request.GET.get('out_path')) 
+    command = "python /static/fairdata/main.py " + in_path + protected + pro_pos + selected + sel_pos + out_path
     subprocess.call(command, shell=True)
-    return HttpResponse("DID I DO THE THING?")
+    return HttpResponse("YOU GO GLEN COCO")
