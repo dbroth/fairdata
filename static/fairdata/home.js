@@ -11,7 +11,7 @@ home.upload_file = function() {
 
     $.ajax({
         type: "POST",
-        url: "/accept_file/",
+        url: "/fairdata/accept_file/",
         dataType: "json",
         data: fd,
         headers: {"X-CSRFToken": csrftoken},
@@ -19,6 +19,7 @@ home.upload_file = function() {
         contentType: false,
         processData: false,
         success: function(data) {
+
             if (!data["valid"]) {
                 alert(data["reason"]);
                 return;
@@ -26,25 +27,24 @@ home.upload_file = function() {
             result = data["result"];
             home.file_id = result["id"];
             home.cols = result["cols"];
+	    home.array_options = result["array_options"];
+	    home.outcome = "";
+	    home.protect = "";
 
             $("#col-typing").empty();
 
 	    //DEREK'S FORM STUFF
 	    $("#col-typing").css({"font-family":"Sintony, sans-serif", "font-size":"1.3em", "font-weight":"400", "text-align":"inline"});
-	    $("#col-typing").append("<br>Which column is your outcome column (<i>i.e. yes/no</i>)?<br>");
+	    $("#col-typing").append("<br>Which is the decision column?<br>");
 	    $("#col-typing").append(home.new_dropdown(false, "outcome"));
 
-	    $("#col-typing").append("What is the outcome value you are looking for (<i>i.e. true</i>)?<br>");
-	    $("#col-typing").append("<input type=\"text\" id=\"outcome_positive\"><br><br>");
 
-	    $("#col-typing").append("Which columns are identifiers (<i>i.e. irrelevant to the classifier</i>)?<br>");
+	    $("#col-typing").append("Which columns should be ignored for this analysis <i>(e.g., an id number)</i>?<br>");
 	    $("#col-typing").append(home.new_dropdown(true, "ids"));
-	    $("#col-typing").append("Which columns contain information that could be used to discriminate?<br>");
+
+	    $("#col-typing").append("Which column contains information that could be used to discriminate?<br>");
 	    $("#col-typing").append(home.new_dropdown(false, "protected"));
 
-	    $("#col-typing").append("What aspect of the protected class are you examining (<i>i.e. Hispanic</i>)?<br>");
-	    $("#col-typing").append("<input type=\"text\" id=\"protected_positive\"><br><br>")
-	    
 	    button_div = document.createElement("div");
 	    button_div.setAttribute("class","submit");
 	    button_div.setAttribute("align","center");
@@ -52,7 +52,7 @@ home.upload_file = function() {
 	    button = document.createElement("input");
             button.setAttribute("type","button");
 	    button.setAttribute("class","form-control");
-	    button.setAttribute("value","Submit");
+	    button.setAttribute("value","Next");
 	    button.setAttribute("onClick","home.col_class()");
 
 	    button_div.appendChild(button);
@@ -65,6 +65,27 @@ home.upload_file = function() {
          alert("Failed to upload file.");
         }
     });
+}
+
+home.options_drop = function(id, selected_col) {
+    dropdown_form = document.createElement("form");
+    select = document.createElement("select");
+    select.setAttribute("class","dropdown");
+    select.setAttribute("id",id);
+
+    var array_index = (home.cols).indexOf(selected_col);
+    var array = home.array_options[array_index];
+
+    $.each(array, function(index, col_name) {
+	new_option = document.createElement("OPTION");
+	text = document.createTextNode(col_name);
+	new_option.appendChild(text);
+	new_option.setAttribute("value",col_name);
+	select.appendChild(new_option);
+    });
+    
+    dropdown_form.appendChild(select);
+    return dropdown_form;
 }
 
 home.new_dropdown = function(mult, id) {
@@ -101,26 +122,58 @@ home.color = function(i) {
 }
 
 home.col_class = function() {
-    var outcome = $("#outcome :selected").val();
+    home.outcome = $("#outcome :selected").val();
+    home.protect = $("#protected :selected").val();
 
-    var ids = [];
-    $("#ids :selected").each(function(index) {
-	ids.push($(this).val());
-    });
+    $("#col-typing").html("");
+    $("#col-typing").append("<br><br>Which value represents a good decision (<i>i.e. yes</i>)?<br>");
+    $("#col-typing").append(home.options_drop("outcome_pos", home.outcome));
 
-    var protect = $("#protected :selected").val();
+    $("#col-typing").append("Which value is the unprotected class (<i>i.e. white, male, etc.</i>)?<br>");
+    $("#col-typing").append(home.options_drop("protected_pos", home.protect));
+
+    button_div = document.createElement("div");
+    button_div.setAttribute("class","submit");
+    button_div.setAttribute("align","center");
+
+    button = document.createElement("input");
+    button.setAttribute("type","button");
+    button.setAttribute("class","form-control");
+    button.setAttribute("value","Submit");
+	console.log(home.protect);
+	console.log(home.outcome);
+    button.setAttribute("onClick", "home.run()");
+
+    button_div.appendChild(button);
+    $("#col-typing").append(button_div);
+    $("#col-typing").fadeIn();
+}
+
+home.run = function() {
+    var protect = home.protect;
+    var outcome = home.outcome;
 
     // positive value (ex: true, 1, hired) as string
     var outcome_positive = $("#outcome_positive").val();
-    
+	console.log(outcome_positive);    
     // value being looked at for protected column (ex: asian)
     var protected_positive = $("#protected_positive").val();
+	console.log(protected_positive);
 
-   // outcome.push(outcome_positive);
-   // protect.push(protected_positive);
+    // read csv
+    $.ajax({
+	type: "GET",
+	url: input_csv,
+	success: function(response) {
+//		console.log(response);
+	}
+    });
 
-    var input_csv = "/../media/user_uploads/" + home.file_id + ".csv";
-    var out_csv = "/graph_csvs/" + home.file_id + ".csv"; 
+    var input_csv = "media/user_uploads/" + home.file_id + ".csv";
+    var out_csv = "fairdata/graph_csvs/" + home.file_id + ".csv"; 
+
+    console.log(protect);
+    console.log(outcome);
 
     // runs main.py
     // FRANCIS
@@ -134,7 +187,7 @@ home.col_class = function() {
 		selected_pos: outcome_positive,
 		out_path: out_csv}, 
         success: function(response) {
-		alert(response);
+	//	alert(response);
 		},
 	error: function(req, textStatus, errorThrown) {
 		alert('FAIL: ' + textStatus + ' ' + errorThrown)
@@ -160,8 +213,6 @@ home.col_class = function() {
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
-
-    
 
     //d3.csv("/fairdata" + out_csv, function(data) {
     d3.csv("/static/fairdata/sampledata.csv", function(data) {
