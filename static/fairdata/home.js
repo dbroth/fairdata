@@ -37,7 +37,7 @@ home.upload_file = function() {
 	    $("#col-typing").css({"font-family":"Sintony, sans-serif", "font-size":"1.3em", "font-weight":"400", "text-align":"inline"});
 	    $("#col-typing").append("<br>Which is the decision column?<br>");
 	    $("#col-typing").append(home.new_dropdown(false, "outcome"));
-
+		//did you pick the correct decision column? are there more than 2 choices?
 
 	    $("#col-typing").append("Which columns should be ignored for this analysis <i>(e.g., an id number)</i>?<br>");
 	    $("#col-typing").append(home.new_dropdown(true, "ids"));
@@ -124,10 +124,21 @@ home.color = function(i) {
 home.col_class = function() {
     home.outcome = $("#outcome :selected").val();
     home.protect = $("#protected :selected").val();
+    var options = home.options_drop("outcome_pos",home.outcome);
 
     $("#col-typing").html("");
     $("#col-typing").append("<br><br>Which value represents a good decision (<i>i.e. yes</i>)?<br>");
-    $("#col-typing").append(home.options_drop("outcome_pos", home.outcome));
+    $("#col-typing").append(options);
+    // if more than 2 options, alert user
+    var length = $('#outcome_pos > option').length;
+
+	if(($('#outcome_pos').children('option').length) > 2) {
+	    var message = "Are you sure " + home.outcome + " was the correct decision column?";
+	    var r = confirm(message);
+	    if(r == false) {
+		home.upload_file();	
+	    };
+	};
 
     $("#col-typing").append("Which value is the unprotected class (<i>i.e. white, male, etc.</i>)?<br>");
     $("#col-typing").append(home.options_drop("protected_pos", home.protect));
@@ -175,8 +186,12 @@ home.run = function() {
     console.log(protect);
     console.log(outcome);
 
+    function UserException(message) {
+	this.message = message;
+	this.name = "UserException";
+    }
+
     // runs main.py
-    // FRANCIS
     $.ajax({
         type: "GET",
         url: "/fairdata/run_script/",
@@ -187,7 +202,9 @@ home.run = function() {
 		selected_pos: outcome_positive,
 		out_path: out_csv}, 
         success: function(response) {
-	//	alert(response);
+		if(response == "Failed to run script!") {
+		    alert("We're sorry! Something went wrong!");
+		    }; 
 		},
 	error: function(req, textStatus, errorThrown) {
 		alert('FAIL: ' + textStatus + ' ' + errorThrown)
@@ -214,8 +231,8 @@ home.run = function() {
 	.append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    //d3.csv("/fairdata" + out_csv, function(data) {
-    d3.csv("/static/fairdata/sampledata.csv", function(data) {
+    d3.csv("/fairdata" + out_csv, function(data) {
+    //d3.csv("/static/fairdata/sampledata.csv", function(data) {
 
 	d3.select("#overall-fairness").text("Overall Fairness");
 	d3.select("#percentage").text("Your data is " + JSON.stringify(data[0]["Ratio"]*100) + "% fair.");
@@ -270,7 +287,8 @@ home.run = function() {
 	.append("g")
 	  .attr("transform","translate("+margin.left +"," + margin.top + ")");
 
-    d3.csv("/static/fairdata/sampledata.csv", function(data) {
+    d3.csv("/fairdata" + out_csv, function(data) {
+    //d3.csv("/static/fairdata/sampledata.csv", function(data) {
 	d3.select("#scores-by-categery").text("Scores by Category");
 	data.shift();
 	

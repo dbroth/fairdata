@@ -61,8 +61,18 @@ def run_script(request):
     sel_pos = str(request.GET.get('selected_pos', '1')) + ' ' 
     out_path = str(request.GET.get('out_path')) 
     command = "python fairdata/main.py " + in_path + protected + pro_pos + selected + sel_pos + out_path + " 2> error.txt > output.txt"
+
+    error_or_nah = "Success!"
+
 #    ls_command = "ls ../media/user_uploads > output.txt"
-    subprocess.call(command, shell=True)
+    try:
+        subprocess.check_call(command, shell=True)
+    except subprocess.CalledProcessError:
+	error_or_nah = "Failed to run script!"
+	pass
+    except OSError:
+	error_or_nah = "Failed to run script!"
+	pass
 #    subprocess.call(ls_command, shell=True)
-    return HttpResponse(command)
+    return HttpResponse(error_or_nah)
 
