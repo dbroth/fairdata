@@ -121,7 +121,7 @@ def read_file(path, prot, sel):
                 if l_lst[sel[2]] == sel[1]:
                     saimc += 1
 
-    beta = float(saimc) / float(imc)
+    beta = 0 if imc == 0 else float(saimc) / float(imc)
 
     return col_names, beta, protected_vals
 

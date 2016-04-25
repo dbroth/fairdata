@@ -151,8 +151,6 @@ home.col_class = function() {
     button.setAttribute("type","button");
     button.setAttribute("class","form-control");
     button.setAttribute("value","Submit");
-	console.log(home.protect);
-	console.log(home.outcome);
     button.setAttribute("onClick", "home.run()");
 
     button_div.appendChild(button);
@@ -170,15 +168,16 @@ home.run = function() {
     // value being looked at for protected column (ex: asian)
     var protected_positive = $("#protected_positive").val();
 	console.log(protected_positive);
-
+/*
     // read csv
     $.ajax({
 	type: "GET",
 	url: input_csv,
 	success: function(response) {
-//		console.log(response);
+		console.log(response);
 	}
     });
+*/
 
     var input_csv = "media/user_uploads/" + home.file_id + ".csv";
     var out_csv = "fairdata/graph_csvs/" + home.file_id + ".csv"; 
@@ -191,6 +190,8 @@ home.run = function() {
 	this.name = "UserException";
     }
 
+/*
+try {
     // runs main.py
     $.ajax({
         type: "GET",
@@ -202,6 +203,7 @@ home.run = function() {
 		selected_pos: outcome_positive,
 		out_path: out_csv}, 
         success: function(response) {
+		console.log(response);
 		if(response == "Failed to run script!") {
 		    alert("We're sorry! Something went wrong!");
 		    }; 
@@ -211,31 +213,96 @@ home.run = function() {
 		alert(req)
 		}
 	});
+} catch(err) {
+	alert(err);
+}
+*/
 
-    // TOTAL GRAPH 
-    var margin = {top: 20, right: 40, bottom: 60, left: 70},
+    // CURRENT DECISIONS
+    var margin = {top: 20, right: 40, bottom: 60, left:70},
 	width = 1100 - margin.left - margin.right,
 	height = 100 - margin.top - margin.bottom;
     var barHeight = 10;
 
     var x = d3.scale.linear()
-	.range([0, width]);
+	.range([0,width]);
 
     var xAxis = d3.svg.axis()
 	.scale(x)
 	.orient("bottom").ticks(4).tickSize(0);
 
-    var graph = d3.select("#total-graph").append("svg")
+    var graph = d3.select("#current-graph").append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+        .append("g")
+	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");    
+
+    d3.csv("/static/fairdata/sampledata.csv", function(data) {
+
+        d3.select("#current-fairness").text("Potential Fairness of Current Decisions");
+	d3.select("#current-percentage").text("Your data is " + JSON.stringify(data[0]["Ratio"]*100) + "% fair.");
+
+        var y = d3.scale.ordinal()
+          .rangeRoundBands([0, barHeight * data.length], .1);
+        var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient("left").tickSize(0);
+
+        var bar = graph.selectAll("g")
+          .data(data)
+          .enter().append("g")
+          .attr("transform", "translate(0," + barHeight - 30 + ")");
+
+        bar.append("rect")
+          .attr("fill", home.color(data[0]["Ratio"]))
+          .attr("width", x(data[0]["Ratio"]))
+          .attr("height", barHeight);
+
+        graph.append("g")
+          .attr("class","x-axis")
+          .attr("transform", "translate(0," + barHeight + ")")
+          .call(xAxis);
+
+        graph.append("g")
+          .attr("class","y-axis")
+          .style("text-anchor","end");
+        //  .call(yAxis);
+
+	 graph.selectAll("line")
+            .attr("stroke","black")
+            .attr("fill","none");
+        graph.selectAll("path")
+            .attr("fill","none")
+            .attr("stroke","black")
+            .attr("shape-rendering","crispEdges");
+    });
+
+
+    // BASED ON DATA 
+    var margin = {top: 20, right: 40, bottom: 60, left: 70},
+	width = 1100 - margin.left - margin.right,
+	height = 100 - margin.top - margin.bottom;
+    var barHeight = 10;
+
+/*    var x = d3.scale.linear()
+	.range([0, width]);
+
+    var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient("bottom").ticks(4).tickSize(0);
+*/
+
+    var graph1 = d3.select("#total-graph").append("svg")
 	.attr("width", width + margin.left + margin.right)
 	.attr("height", height + margin.top + margin.bottom)
 	.append("g")
 	  .attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
-    d3.csv("/fairdata" + out_csv, function(data) {
-    //d3.csv("/static/fairdata/sampledata.csv", function(data) {
+    //d3.csv("/fairdata" + out_csv, function(data) {
+    d3.csv("/static/fairdata/sampledata.csv", function(data) {
 
-	d3.select("#overall-fairness").text("Overall Fairness");
-	d3.select("#percentage").text("Your data is " + JSON.stringify(data[0]["Ratio"]*100) + "% fair.");
+	d3.select("#overall-fairness").text("Potential Fairness of Decisions Made Based on This Data");
+	d3.select("#percentage").text("Your data is " + JSON.stringify(data[1]["Ratio"]*100) + "% fair.");
 
 	var y = d3.scale.ordinal()
 	  .rangeRoundBands([0, barHeight * data.length], .1);
@@ -243,30 +310,30 @@ home.run = function() {
 	  .scale(y)
 	  .orient("left").tickSize(0);
 
-	var bar = graph.selectAll("g")
+	var bar = graph1.selectAll("g")
 	  .data(data)
 	  .enter().append("g")
 	  .attr("transform", "translate(0," + barHeight - 30 + ")");
 
         bar.append("rect")
-	  .attr("fill", home.color(data[0]["Ratio"]))
-	  .attr("width", x(data[0]["Ratio"]))
+	  .attr("fill", home.color(data[1]["Ratio"]))
+	  .attr("width", x(data[1]["Ratio"]))
           .attr("height", barHeight);
 
-	graph.append("g")
+	graph1.append("g")
 	  .attr("class","x-axis")
 	  .attr("transform", "translate(0," + barHeight + ")")
 	  .call(xAxis);
 
-	graph.append("g")
+	graph1.append("g")
 	  .attr("class","y-axis")
 	  .style("text-anchor","end");
 	//  .call(yAxis);
 
-	graph.selectAll("line")
+	graph1.selectAll("line")
             .attr("stroke","black")
             .attr("fill","none");
-        graph.selectAll("path")
+        graph1.selectAll("path")
             .attr("fill","none")
             .attr("stroke","black")
             .attr("shape-rendering","crispEdges");	
@@ -287,9 +354,10 @@ home.run = function() {
 	.append("g")
 	  .attr("transform","translate("+margin.left +"," + margin.top + ")");
 
-    d3.csv("/fairdata" + out_csv, function(data) {
-    //d3.csv("/static/fairdata/sampledata.csv", function(data) {
+    //d3.csv("/fairdata" + out_csv, function(data) {
+    d3.csv("/static/fairdata/sampledata.csv", function(data) {
 	d3.select("#scores-by-categery").text("Scores by Category");
+	data.shift();
 	data.shift();
 	
 	var y = d3.scale.ordinal()

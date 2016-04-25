@@ -12,7 +12,9 @@ body {
 }
 
 .submit {
-    padding: 0px 600px;
+    /* padding: 0px 600px; */
+    height: auto;
+    padding: 0px 550px;
 }
 
 h1, h2 {
